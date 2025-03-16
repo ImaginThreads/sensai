@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String @id @default(uuid())
+  clerkUserId    String @unique 
+  email          String @unique
+  name           String?
+  imageUrl       String?
+  industry       String?  // Combined industry-subIndustry (e.g. "tech-software-development)
+  industryInsights IndustryInsights? @relation(fields: [industry], references: [industry])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Profile fields
+  bio            String?
+  experience     Int?     // Year of experience
+  skill          String[]  // Array of skills
+  assessments    Assessment[]
+  resume         Resume?    // One-to-one relationship with Resume
+  coverLetter    CoverLetter[] // One-to-many relationship with CoverLetter
+}
+
+model Assessment {
+  id              String @id @default(cuid())
+  userId          String
+  user            User @relation(fields: [userId], references: [id])
+  quizScore       Float
+  questions       Json[]
+  category        String
+  improvementTip  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Resume {
+  id              String @id @default(cuid())
+  userId          String @unique // ✅ Added `@unique` for one-to-one relationship
+  user            User @relation(fields: [userId], references: [id])
+  content         String @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model CoverLetter {
+  id              String @id @default(cuid())
+  userId          String
+  user            User @relation(fields: [userId], references: [id])
+  content         String @db.Text
+  jobDescription  String?
+  companyName     String
+  jobTitle        String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model IndustryInsights {
+  id              String @id @default(cuid())
+  industry        String @unique
+  users           User[]
+  // Salary data
+  salaryRanges    Json[] // Array of {role: string, min: float, max: float, median: float, location: string?}
+
+  // Industry trends
+  growthRate      Float
+  DemandLevel     String
+  topSkills       String
+
+  // Market condition
+  MarketOutLook   String // Positive, neutral, negative
+  keyTrends       String[] // Array of current industry trends
+
+  // Learning suggestions
+  recommendedSkills String[] // Skills recommended for the industry
+
+  lastUpdated     DateTime @default(now())
+  nextUpdate      DateTime // Scheduled update time
+
+  @@index([industry])
+}
+
+enum DemandLevel {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum MarketOutLook {
+  POSITIVE
+  NEUTRAL
+  NEGATIVE
+}

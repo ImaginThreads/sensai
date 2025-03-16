@@ -1,18 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* @import "tailwindcss"; */
 
-@custom-variant dark (&:is(.dark *));
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+body {
+  font-family: Arial, Helvetica, sans-serif;
 }
-
-
 
 @layer base {
   :root {
@@ -70,8 +62,6 @@
   }
 }
 
-
-
 @layer base {
   * {
     @apply border-border;
@@ -81,6 +71,34 @@
   }
 }
 
+@layer utilities {
+  .gradient {
+    @apply bg-gradient-to-b from-gray-400 via-gray-200 to-gray-600;
+  }
+  .gradient-title {
+    @apply gradient font-extrabold tracking-tighter text-transparent bg-clip-text pb-2 pr-2;
+  }
+}
+
+.hero-image-wrapper {
+  perspective: 1000px;
+  width: 100%; /* Ensure the wrapper takes full width */
+  max-width: 1280px; /* Adjust based on your design */
+  margin: 0 auto; /* Center the image */
+}
+
+.hero-image {
+  transform: rotateX(15deg) scale(1);
+  transition: transform 0.5s ease-out;
+  will-change: transform;
+  width: 100%; /* Ensure the image takes full width */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.hero-image.scrolled {
+  transform: rotateX(0deg) scale(1) translateY(40px);
+}
+
 .grid-background {
   position: fixed;
   top: 0;
@@ -88,48 +106,22 @@
   width: 100%;
   height: 100%;
   background: linear-gradient(
-    to right,
-    rgba(255, 255,255, 0.1) 1px,
-    transparent 1px
-  ),
-  linear-gradient(
-    to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px
-  );
+      to right,
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
   background-size: 50px 50px;
   pointer-events: none;
   z-index: -1;
 }
-.grid-background::before{
+
+.grid-background::before {
   content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(
-    circle,
-    transparent,
-    rgba(0, 0, 0, 0.9)
-  );
-}
-
-@layer utilities {
-  .gradient {
-    @apply bg-gradient-to-b from-gray-400 via-gray-200 to-gray-600;
-  }
-
-  .gradient-title {
-    @apply gradient font-extrabold tracking-tighter text-transparent bg-clip-text pb-2 pr-2
-  }
-}
-.hero-image-wrapper {
-  perspective: 1000px;
-}
-.hero-image {
-  transform: rotate(15deg) scale(1);
-  transition: transform 0.5s ease-out;
-  will-change: transform;
-}
-.hero-image.scrolled {
-  transform: rotate(0deg) scale(1) translateY(40px);
+  background: radial-gradient(circle, transparent, rgba(0, 0, 0, 0.9));
 }
